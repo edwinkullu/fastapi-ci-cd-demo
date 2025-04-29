@@ -26,9 +26,14 @@ jobs:
       run: |
         echo "${{ secrets.KUBE_CONFIG }}" > kubeconfig.yaml
         kubectl --kubeconfig=kubeconfig.yaml config use-context kubernetes-admin@piramal-cluster.local
+        kubectl --kubeconfig=kubeconfig.yaml config current-context
+
+    - name: Verify Kubernetes Cluster Connection
+      run: |
+        kubectl --kubeconfig=kubeconfig.yaml cluster-info
 
     - name: Apply Kubernetes manifests
       run: |
-        kubectl apply -f kubernetes/deployment.yaml --validate=false
-        kubectl apply -f kubernetes/service.yaml --validate=false
-        kubectl apply -f kubernetes/ingress.yaml --validate=false
+        kubectl --kubeconfig=kubeconfig.yaml apply -f kubernetes/deployment.yaml --validate=false
+        kubectl --kubeconfig=kubeconfig.yaml apply -f kubernetes/service.yaml --validate=false
+        kubectl --kubeconfig=kubeconfig.yaml apply -f kubernetes/ingress.yaml --validate=false
