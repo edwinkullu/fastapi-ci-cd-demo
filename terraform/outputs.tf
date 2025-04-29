@@ -1,13 +1,15 @@
-output "cluster_name" {
-  value = module.eks.cluster_name
-}
-
 output "region" {
   value = var.region
 }
 
-output "kubeconfig" {
-  description = "Kubeconfig to access EKS cluster"
-  value       = module.eks.kubeconfig
-  sensitive   = true
+output "cluster_name" {
+  value = module.eks.cluster_name
+}
+
+output "cluster_endpoint" {
+  value = module.eks.cluster_endpoint
+}
+
+output "cluster_certificate_authority_data" {
+  value = module.eks.cluster_certificate_authority_data
 }
