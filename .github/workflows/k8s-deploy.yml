@@ -3,8 +3,7 @@ name: Deploy FastAPI App to AWS EKS
 on:
   push:
     branches:
-      - '**'  # trigger on all branches
-    # Remove 'paths' restriction for now to ensure it triggers
+      - '**'  # Trigger on all branches
 
 env:
   TF_WORKING_DIR: ./terraform
@@ -22,9 +21,9 @@ jobs:
     - name: Configure AWS Credentials
       uses: aws-actions/configure-aws-credentials@v1
       with:
-        aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        region: ${{ secrets.TF_VAR_REGION }}
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ secrets.TF_VAR_REGION }}
 
     - name: Setup Terraform
       uses: hashicorp/setup-terraform@v2
@@ -66,9 +65,22 @@ jobs:
     - name: Configure AWS Credentials
       uses: aws-actions/configure-aws-credentials@v1
       with:
-        aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        region: ${{ secrets.TF_VAR_REGION }}
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ secrets.TF_VAR_REGION }}
 
     - name: Set up Kubeconfig
       run: |
+        aws eks update-kubeconfig --region ${{ secrets.TF_VAR_REGION }} --name ${{ secrets.TF_VAR_CLUSTER_NAME }}
+
+    - name: Deploy Kubernetes Resources
+      run: |
+        kubectl apply -f kubernetes/clusterissuer.yaml
+        kubectl apply -f kubernetes/deployment.yaml
+        kubectl apply -f kubernetes/service.yaml
+        kubectl apply -f kubernetes/ingress.yaml
+
+    - name: Wait for Deployment to be Ready
+      run: |
+        kubectl rollout status deployment/fastapi-app
+        kubectl get svc fastapi-service
