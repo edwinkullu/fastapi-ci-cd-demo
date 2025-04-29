@@ -28,13 +28,21 @@ jobs:
     - name: Setup Terraform
       uses: hashicorp/setup-terraform@v2
 
+    - name: Clean Terraform Cache
+      working-directory: ${{ env.TF_WORKING_DIR }}
+      run: rm -rf .terraform .terraform.lock.hcl
+
     - name: Terraform Init
       working-directory: ${{ env.TF_WORKING_DIR }}
       run: terraform init
 
+    - name: Terraform Plan
+      working-directory: ${{ env.TF_WORKING_DIR }}
+      run: terraform plan -out=tfplan
+
     - name: Terraform Apply
       working-directory: ${{ env.TF_WORKING_DIR }}
-      run: terraform apply -auto-approve
+      run: terraform apply -auto-approve tfplan
 
   docker:
     name: 🐳 Build & Push Docker Image
