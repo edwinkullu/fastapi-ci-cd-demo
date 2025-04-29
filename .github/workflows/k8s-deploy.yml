@@ -18,11 +18,11 @@ jobs:
     - name: Configure kubectl
       run: |
         echo "${{ secrets.KUBE_CONFIG }}" > kubeconfig.yaml
-        cat kubeconfig.yaml 
+        cat kubeconfig.yaml
         kubectl --kubeconfig=kubeconfig.yaml config use-context kubernetes-admin@piramal-cluster.local
 
     - name: Apply Kubernetes manifests
       run: |
-        kubectl apply -f deployment.yaml
-        kubectl apply -f service.yaml
-        kubectl apply -f ingress.yaml
+        kubectl apply -f kubernetes/deployment.yaml
+        kubectl apply -f kubernetes/service.yaml
+        kubectl apply -f kubernetes/ingress.yaml
