@@ -3,12 +3,8 @@ name: Deploy FastAPI App to AWS EKS
 on:
   push:
     branches:
-      - main
-    paths:
-      - 'terraform/**'
-      - 'kubernetes/**'
-      - 'Dockerfile'
-      - 'app/**'
+      - '**'  # trigger on all branches
+    # Remove 'paths' restriction for now to ensure it triggers
 
 env:
   TF_WORKING_DIR: ./terraform
@@ -76,16 +72,3 @@ jobs:
 
     - name: Set up Kubeconfig
       run: |
-        aws eks update-kubeconfig --region ${{ secrets.TF_VAR_REGION }} --name ${{ secrets.TF_VAR_CLUSTER_NAME }}
-
-    - name: Deploy Kubernetes Resources
-      run: |
-        kubectl apply -f kubernetes/clusterissuer.yaml
-        kubectl apply -f kubernetes/deployment.yaml
-        kubectl apply -f kubernetes/service.yaml
-        kubectl apply -f kubernetes/ingress.yaml
-
-    - name: Wait for Deployment to be Ready
-      run: |
-        kubectl rollout status deployment/fastapi-app
-        kubectl get svc fastapi-service
