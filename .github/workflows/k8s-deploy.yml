@@ -18,6 +18,7 @@ jobs:
     - name: Configure kubectl
       run: |
         echo "${{ secrets.KUBE_CONFIG }}" > kubeconfig.yaml
+        cat kubeconfig.yaml  # Debugging: Print the kubeconfig content
         kubectl --kubeconfig=kubeconfig.yaml config use-context kubernetes-admin@piramal-cluster.local
 
     - name: Apply Kubernetes manifests
